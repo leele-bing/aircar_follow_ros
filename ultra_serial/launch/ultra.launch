@@ -1,0 +1,21 @@
+<launch>
+
+
+    <!--<include -->
+    <!--file = "$(find turtlebot_gazebo)/launch/turtlebot_world.launch">-->
+    <!--<arg name = "world_file" value =  "$(find line_follower_turtlebot)/Maps/lfm1.world"/>-->
+    <!--</include>-->
+
+    <!-- Detection node
+    <node name="republish" type="republish" pkg="image_transport" output="screen"
+          args="compressed in:=/raspicam_node/image raw out:=/raspicam_node/image_raw"/> -->
+
+    <!-- <include file="$(find sound_play)/soundplay_node.launch"/> -->
+
+    <!-- Robot commands node -->
+    <node pkg="ultra_serial" name="ultra" type="ultra_serial_read" cwd="node" output="screen"/>
+
+
+    <!--    <node type="rviz" name="rviz" pkg="rviz" args="-d /home/turtlepc-01/.rviz/default.rviz" />-->
+
+</launch>

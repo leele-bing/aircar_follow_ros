@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="ultra_lidar" name="ultra" type="ultra_lidar_read" cwd="node" output="screen"/>
+
+</launch>

@@ -1,0 +1,6 @@
+<launch>
+
+    <!-- Robot commands node -->
+    <node pkg="uwb_nooploop_aoa_serial" name="uwb" type="uwb_aoa_serial_read" cwd="node" output="screen"/>
+
+</launch>
