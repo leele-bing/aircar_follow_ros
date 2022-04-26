@@ -1,0 +1,4 @@
+
+std_msgs/Header header
+float64 left_motor_current
+float64 right_motor_current

@@ -1,0 +1,9 @@
+<launch>
+    <node name="joy_node" pkg="joy" type="joy_node" output="screen"/>
+
+    <node name="joyROS" pkg="aircar_base" type="joyROS" output="screen">
+        <param name="linearVelocityMax" type="double" value="1.5"/>
+        <param name="rotateVelocityMax" type="double" value="3.1415926"/>
+    </node>
+
+</launch>
