@@ -5,7 +5,7 @@
     <include file="$(find follow)/launch/static_tf.launch"/>
     
     <!-- start artag track -->
-    <arg name="marker_size" default="20" />
+    <!-- <arg name="marker_size" default="20" />
     <arg name="max_new_marker_error" default="0.1" />		
     <arg name="max_track_error" default="0.2" />
     <arg name="cam_image_topic" default="/camera/color/image_raw" />
@@ -20,7 +20,9 @@
     
     <remap from="camera_image"  to="$(arg cam_image_topic)" />
     <remap from="camera_info"   to="$(arg cam_info_topic)" />
-    </node>
+    </node> -->
+
+    <include file="$(find aruco_ros)/launch/single.launch"/>
     <!-- robot controller -->
     <node pkg="follow" name="follow_node" type="follow_node" cwd="node" output="screen"/>
     
