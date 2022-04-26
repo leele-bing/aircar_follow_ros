@@ -9,7 +9,7 @@ add_compile_options(-std=c++11)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
-  ar_track_alvar_msgs
+  aruco_ros
   uwb_nooploop_aoa_serial
   ultra_serial
   roscpp

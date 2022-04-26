@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "uwb_nooploop_aoa_serial/UwbAOA0.h"
 #include "ultra_serial/ultra.h"
-#include "ar_track_alvar_msgs/AlvarMarkers.h"
+#include "visualization_msgs/Marker.h"
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/TransformStamped.h>
@@ -14,10 +14,10 @@
 
 // initialize global
 double ar_pose[2] = {FOLLOW_D, 0};
-int ar_id = -1;
+bool ar_dis = false;
 double uwb0_pose[2] = {FOLLOW_D, 0};
 int uwb_id = -1;
-bool us_dis = true;
+bool us_dis = false;
 
 
 /**
@@ -25,16 +25,17 @@ bool us_dis = true;
 **/
 void get_uwb0_pose(uwb_nooploop_aoa_serial::UwbAOA0 req)
 {   
-    ROS_INFO("uwb0 dis: %f, angle: %f", req.distance, req.angle);
-    uwb0_pose[1] = -((double)req.angle) / 180 * M_PI;
+    uwb0_pose[1] = ((double)req.angle) / 180 * M_PI;
     uwb0_pose[0] = (double)req.distance;
+    ROS_INFO("uwb0 dis: %f m, angle: %f ' ", req.distance, req.angle);
     if ((abs(uwb0_pose[1]) < 5* M_PI / 6) && !req.time_out)
     {
         uwb_id = 0;
-        pose2tf(uwb0_pose[0] * cos(uwb0_pose[1]), -1 * uwb0_pose[0] * sin(uwb0_pose[1]), uwb0_pose[1], "/uwb0_link", "/tag0_link");
+        pose2tf(uwb0_pose[0] * cos(uwb0_pose[1]), uwb0_pose[0] * sin(uwb0_pose[1]), uwb0_pose[1], "/uwb0_link", "/tag0_link");
     }
     else
-    {
+    {   
+        ROS_ERROR("uwb0 timeout");
         uwb_id = -1;
         uwb0_pose[0] = FOLLOW_D;
         uwb0_pose[1] =  0;
@@ -96,42 +97,23 @@ bool us_filter(bool now, int index)
 /**
  * record ar tag pose
 **/
-void get_ar_pose(ar_track_alvar_msgs::AlvarMarkers req)
+void get_ar_pose(visualization_msgs::Marker req)
 {
-    int marker_id = -1;
-    double marker_distance = FOLLOW_D;
-    double marker_bias = 0;
+    // int marker_id = -1;
+    // double marker_distance = FOLLOW_D;
+    // double marker_angle = 0;
     // ROS_INFO("sub marker");
-    if (!req.markers.empty())
-    {
-        for (auto &marker : req.markers)
-        {   
-            // elinimate the error marker at the origin
-            if(abs(marker.pose.pose.position.z) < 0.02 && abs(marker.pose.pose.position.x) < 0.02 ) 
-            {
-                ROS_INFO("error marker");
-                break;
-            }
-            // calculate maker 0 pose
-            if (marker.id == 0)
-            {
-                marker_id = 0;
-                double z = marker.pose.pose.position.z;
-                double x = marker.pose.pose.position.x;
-                marker_distance = sqrt(z*z + x*x);
-                marker_bias = atan2(x,z);
-                ROS_INFO("find marker id: %d, z %f, x %f, dis %f m, angle %f '", 
-                         marker.id, z, x, marker_distance, marker_bias /M_PI * 180);
-            }
-        }
-    }
-    else{
-        ROS_INFO("no marker");
-    }
-    // record
-    ar_pose[0] = marker_distance;
-    ar_pose[1] = marker_bias;
-    ar_id = marker_id;   
+    // if (!req.empty())
+    // {
+    // calculate maker 111 pose
+
+    double x = req.pose.position.x;
+    double y = req.pose.position.y;
+    ar_pose[0] = sqrt(x*x + y*y);
+    ar_pose[1] = atan2(y,x);
+    ROS_INFO("find marker 111: x %f, y: %f, dis %f m, angle %f '", 
+                x, y, ar_pose[0], ar_pose[1] /M_PI * 180);
+    ar_dis = true;
 }
 
 /**

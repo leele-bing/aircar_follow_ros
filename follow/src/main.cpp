@@ -20,13 +20,13 @@ int main(int argc, char **argv)
     ros::NodeHandle n;
     
     // 3 observer
-    ros::Subscriber tag_sub = n.subscribe("/ar_pose_marker", 10, get_ar_pose);
+    ros::Subscriber ar_sub = n.subscribe("/aruco_single/marker", 10, get_ar_pose);
     ros::Subscriber uwb0_sub = n.subscribe("uwb_aoa0_msg", 10, get_uwb0_pose);
     ros::Subscriber us_sub = n.subscribe("/ultra_msg", 10, get_us_dis);
     
     // declare 2 pid
     Controller linear(1.0, 0.3);
-    Controller angle(-1, 0.1);
+    Controller angle(1, 0.1);
 
     geometry_msgs::Twist velocity;
     
@@ -36,9 +36,9 @@ int main(int argc, char **argv)
     while (ros::ok()) {
         // get pose
         ros::spinOnce();
-
+	ROS_INFO("ar %c, uwb %d", ar_dis?'T':'F', uwb_id);
         // choose ar if exist, else if uwb is reliabel, else stop
-        if (ar_id == 0)
+        if (ar_dis)
         {   
             velocity.angular.z = angle.get_u(0, ar_pose[1], LIM_W, true);
             velocity.linear.x = linear.get_u(FOLLOW_D, ar_pose[0], LIM_V - abs(velocity.angular.z), false);
@@ -70,7 +70,8 @@ int main(int argc, char **argv)
             v_pub.publish(velocity);
             ROS_ERROR("US STOP");
         }
-        
+
+        ar_dis = false;
         loop_rate.sleep();
     };
 

@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     //打开串口设备
     try
     {
-        ser.setPort("/dev/ttyUSB0");
+        ser.setPort("/dev/ttyUSB1");
         ser.setBaudrate(9600);
         serial::Timeout to = serial::Timeout::simpleTimeout(1000);
         ser.setTimeout(to);
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
             }
         }
 	long long current_stamp = ros::Time::now().toNSec();
-	if(current_stamp - last_get_msg_stamp > 400*1000)
+	if(current_stamp - last_get_msg_stamp > 300*1000*1000)
 	{
 	  ultra_msg.time_out = true;
 	  ultra_pub.publish(ultra_msg);

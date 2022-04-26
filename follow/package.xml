@@ -62,7 +62,8 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
-  <!-- <depend>uwb_serial</depend> -->
+  
+  <depend>aruco_ros</depend>
   <depend>uwb_nooploop_aoa_serial</depend>
   <depend>ultra_serial</depend>
   <depend>tf2</depend>

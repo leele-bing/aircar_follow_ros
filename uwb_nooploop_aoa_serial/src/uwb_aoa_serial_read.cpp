@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     ros::Publisher uwb2_pub = nh.advertise<uwb_nooploop_aoa_serial::UwbAOA2>("uwb_aoa2_msg", 1000);
     try
     {
-        ser.setPort("/dev/ttyUSB1");
+        ser.setPort("/dev/ttyUSB0");
         ser.setBaudrate(921600);
         serial::Timeout to = serial::Timeout::simpleTimeout(1000);
         ser.setTimeout(to);
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
                             uwb_aoa0_msg.angle = angl / 100.0f;
                             uwb_aoa0_msg.fp_rssi = (buffer[28] / -2.0);
                             uwb_aoa0_msg.rx_rssi = (buffer[29] / -2.0);
-			    uwb_aoa0_msg.time_out = false;
+			                uwb_aoa0_msg.time_out = false;
                             last_get_aoa0_msg_stamp = ros::Time::now().toNSec();
                             uwb0_pub.publish(uwb_aoa0_msg);
                         }
@@ -265,18 +265,19 @@ int main(int argc, char *argv[])
         long long current_stamp = ros::Time::now().toNSec();
         // ROS_INFO_STREAM(current_stamp);
         // ROS_ERROR_STREAM(last_get_aoa0_msg_stamp);
-        if(current_stamp - last_get_aoa0_msg_stamp > 200 * 1000)
+        if(current_stamp - last_get_aoa0_msg_stamp > 200 * 1000 *1000)
         {
             uwb_aoa0_msg.time_out = true;
-           // ROS_ERROR_STREAM("time out");
+            ROS_ERROR_STREAM("time out");
+            ROS_INFO("time:%d",current_stamp - last_get_aoa0_msg_stamp);
             uwb0_pub.publish(uwb_aoa0_msg);
         }
-        if(current_stamp - last_get_aoa1_msg_stamp > 200 * 1000)
+        if(current_stamp - last_get_aoa1_msg_stamp > 200 * 1000 *1000)
         {
             uwb_aoa1_msg.time_out = true;
             uwb1_pub.publish(uwb_aoa1_msg);
         }
-        if(current_stamp - last_get_aoa2_msg_stamp > 200 * 1000)
+        if(current_stamp - last_get_aoa2_msg_stamp > 200 * 1000 *1000)
         {
             uwb_aoa2_msg.time_out = true;
             uwb2_pub.publish(uwb_aoa2_msg);
